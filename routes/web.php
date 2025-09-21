@@ -5,7 +5,7 @@ use App\Http\Controllers\JamaahTemplateController;
 use App\Http\Controllers\Api\FcmController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/admin');
 });
 
 Route::get('/jamaah/template/download', [JamaahTemplateController::class, 'download'])->name('jamaah.template.download');
