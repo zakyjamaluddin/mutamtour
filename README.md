@@ -1,61 +1,239 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🕌 Mutamtour - Sistem Manajemen Jamaah Umroh
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Laravel-11.x-red.svg" alt="Laravel Version">
+  <img src="https://img.shields.io/badge/Filament-3.x-blue.svg" alt="Filament Version">
+  <img src="https://img.shields.io/badge/PHP-8.1+-green.svg" alt="PHP Version">
+  <img src="https://img.shields.io/badge/Firebase-FCM-orange.svg" alt="Firebase FCM">
 </p>
 
-## About Laravel
+## 📖 Tentang Aplikasi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Mutamtour** adalah aplikasi web berbasis Laravel Filament untuk manajemen data jamaah umroh. Aplikasi ini dirancang khusus untuk membantu travel umroh Mutamtour dalam mengelola data jamaah, pembayaran, paket umroh, dan keberangkatan secara online dan real-time.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🎯 **Manajemen Data Jamaah**
+- Pencatatan data lengkap jamaah (nama, alamat, kontak, dll.)
+- Status vaksin meningitis, polio, dan paspor
+- Status pembayaran terintegrasi
+- Import data jamaah via Excel
 
-## Learning Laravel
+### 📦 **Manajemen Paket Umroh**
+- Daftar paket umroh dengan durasi
+- Tracking jumlah group dan jamaah per paket
+- Detail paket dengan informasi lengkap
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 👥 **Manajemen Group Keberangkatan**
+- Pengelompokan jamaah berdasarkan paket
+- Tracking sisa seat otomatis
+- Informasi tour leader dan vendor
+- Tanggal keberangkatan terstruktur
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🏢 **Manajemen Kantor Cabang**
+- Data cabang Mutamtour
+- Tracking jamaah per kantor
+- Statistik per cabang
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 💰 **Sistem Pembayaran**
+- Pencatatan pembayaran jamaah
+- Jenis pembayaran (DP, Vaksin, Paspor, dll.)
+- Status lunas otomatis
+- Laporan keuangan terintegrasi
 
-## Laravel Sponsors
+### 🔔 **Push Notification Real-time**
+- Notifikasi otomatis ketika ada jamaah baru
+- Informasi sisa seat real-time
+- Firebase Cloud Messaging (FCM) integration
+- Multi-device support
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 👤 **Sistem User & Role**
+- Role-based access control
+- Permission management
+- User authentication
 
-### Premium Partners
+## 🚀 Teknologi yang Digunakan
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Backend**: Laravel 11.x
+- **Frontend**: Filament 3.x (Admin Panel)
+- **Database**: SQLite (development) / MySQL (production)
+- **Push Notification**: Firebase Cloud Messaging
+- **Authentication**: Laravel Breeze + Filament Shield
+- **Import/Export**: Laravel Excel (Maatwebsite)
 
-## Contributing
+## 📋 Persyaratan Sistem
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP 8.1 atau lebih tinggi
+- Composer
+- Node.js & NPM
+- SQLite/MySQL
+- Web server (Apache/Nginx)
 
-## Code of Conduct
+## 🛠️ Instalasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Clone Repository
+```bash
+git clone https://github.com/your-username/mutamtour.git
+cd mutamtour
+```
 
-## Security Vulnerabilities
+### 2. Install Dependencies
+```bash
+composer install
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Konfigurasi Environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## License
+### 4. Setup Database
+```bash
+php artisan migrate
+php artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Build Assets
+```bash
+npm run build
+```
+
+### 6. Setup Firebase (untuk Push Notification)
+1. Buat project di [Firebase Console](https://console.firebase.google.com/)
+2. Aktifkan Cloud Messaging
+3. Generate service account key
+4. Update konfigurasi di `.env`:
+```env
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
+FIREBASE_VAPID_KEY=your-vapid-key
+# ... konfigurasi Firebase lainnya
+```
+
+### 7. Jalankan Aplikasi
+```bash
+php artisan serve
+```
+
+Akses aplikasi di `http://localhost:8000/admin`
+
+## 📱 Konfigurasi Push Notification
+
+### 1. Dapatkan Key Firebase
+- API Key dari Web App Config
+- Project ID dari Project Settings
+- VAPID Key dari Cloud Messaging
+- Service Account Key dari Service Accounts
+
+### 2. Update File JavaScript
+Edit file `public/js/firebase-messaging-sw.js` dengan konfigurasi Firebase yang benar.
+
+### 3. Test Notifikasi
+```bash
+# Test via command line
+php artisan test:jamaah-notification {jamaah_id}
+
+# Test via browser
+http://localhost:8000/test-notification.html
+```
+
+## 📊 Struktur Database
+
+### Tabel Utama
+- **jamaah** - Data jamaah umroh
+- **paket** - Paket umroh yang tersedia
+- **groups** - Group keberangkatan
+- **kantor** - Cabang Mutamtour
+- **pembayaran** - Data pembayaran jamaah
+- **notifications** - Notifikasi sistem
+- **fcm_tokens** - Token device untuk FCM
+
+## 🔧 Command yang Tersedia
+
+```bash
+# Test notifikasi jamaah
+php artisan test:jamaah-notification {jamaah_id}
+
+# Jalankan queue worker (untuk notifikasi)
+php artisan queue:work
+
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+```
+
+## 📁 Struktur Project
+
+```
+mutamtour/
+├── app/
+│   ├── Filament/Resources/     # Filament resources
+│   ├── Models/                 # Eloquent models
+│   ├── Services/               # Business logic
+│   ├── Events/                 # Event classes
+│   └── Listeners/              # Event listeners
+├── database/
+│   ├── migrations/             # Database migrations
+│   └── seeders/                # Database seeders
+├── public/
+│   ├── js/                     # JavaScript files
+│   └── test-*.html             # Test files
+├── resources/
+│   └── views/filament/         # Blade templates
+└── routes/
+    └── web.php                 # Web routes
+```
+
+## 🎯 Fitur Push Notification
+
+### Notifikasi Otomatis
+- **Jamaah Baru**: Ketika ada jamaah baru ditambahkan ke group
+- **Sisa Seat**: Menampilkan informasi sisa seat yang tersedia
+- **Real-time**: Notifikasi dikirim secara real-time
+
+### Management Notifikasi
+- Admin panel untuk kelola notifikasi
+- Status read/unread
+- Filter dan search
+- Bulk actions
+
+## 🔒 Keamanan
+
+- Role-based access control
+- CSRF protection
+- Input validation
+- SQL injection protection
+- XSS protection
+
+## 📈 Monitoring & Logging
+
+- Laravel logging system
+- Firebase notification logs
+- Error tracking
+- Performance monitoring
+
+## 🤝 Kontribusi
+
+1. Fork repository
+2. Buat feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+## 📞 Support
+
+Untuk pertanyaan atau bantuan, silakan hubungi:
+- Email: support@mutamtour.com
+- Documentation: [Wiki](https://github.com/your-username/mutamtour/wiki)
+
+## 📄 Lisensi
+
+Project ini dilisensikan di bawah [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+<p align="center">Dibuat dengan ❤️ untuk Mutamtour</p>
