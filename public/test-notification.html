@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Firebase Notification</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+</head>
+<body>
+    <h1>Test Firebase Notification</h1>
+    <button id="requestPermission">Request Permission</button>
+    <button id="getToken">Get Token</button>
+    <button id="testNotification">Test Notification</button>
+    <div id="status"></div>
+    <div id="token"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2wjgVWKXkGB8xFmfaDumyWStL_QIFrGI",
+            authDomain: "mutamtour.firebaseapp.com",
+            projectId: "mutamtour",
+            storageBucket: "mutamtour.appspot.com",
+            messagingSenderId: "1068486202316",
+            appId: "1:1068486202316:web:ab59b6de9f2c5ea6dc0369",
+            measurementId: "G-6EZ2QTLCH4"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        // Request permission
+        document.getElementById('requestPermission').addEventListener('click', async () => {
+            try {
+                const permission = await Notification.requestPermission();
+                document.getElementById('status').innerHTML = `Permission: ${permission}`;
+                console.log('Permission:', permission);
+            } catch (error) {
+                console.error('Error requesting permission:', error);
+                document.getElementById('status').innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        // Get token
+        document.getElementById('getToken').addEventListener('click', async () => {
+            try {
+                const token = await messaging.getToken({
+                    vapidKey: 'YOUR_VAPID_KEY' // Ganti dengan VAPID key yang benar
+                });
+                document.getElementById('token').innerHTML = `Token: ${token}`;
+                console.log('Token:', token);
+            } catch (error) {
+                console.error('Error getting token:', error);
+                document.getElementById('token').innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        // Test notification
+        document.getElementById('testNotification').addEventListener('click', () => {
+            if (Notification.permission === 'granted') {
+                new Notification('Test Notification', {
+                    body: 'This is a test notification from Mutamtour',
+                    icon: '/favicon.ico'
+                });
+            } else {
+                alert('Please request permission first');
+            }
+        });
+
+        // Listen for messages
+        messaging.onMessage((payload) => {
+            console.log('Message received:', payload);
+            document.getElementById('status').innerHTML = `Message received: ${payload.notification.title}`;
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test FCM API</title>
+</head>
+<body>
+    <h1>Test FCM API</h1>
+    <button id="testRegister">Test Register Token</button>
+    <button id="testNotification">Test Send Notification</button>
+    <div id="result"></div>
+
+    <script>
+        // Test register token
+        document.getElementById('testRegister').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/fcm/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({
+                        token: 'test-token-' + Date.now()
+                    })
+                });
+
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `Register Result: ${JSON.stringify(result)}`;
+                console.log('Register result:', result);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        // Test send notification
+        document.getElementById('testNotification').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/fcm/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({
+                        title: 'Test Notification',
+                        body: 'This is a test notification from API'
+                    })
+                });
+
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `Notification Result: ${JSON.stringify(result)}`;
+                console.log('Notification result:', result);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
+
