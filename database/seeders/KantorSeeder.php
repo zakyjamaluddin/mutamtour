@@ -32,3 +32,7 @@ class KantorSeeder extends Seeder
 
 
 
+
+
+
+
