@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             JamaahSeeder::class,
             // PembayaranSeeder::class,
             // UserSeeder::class,
-            NotificationSeeder::class,
+            // NotificationSeeder::class,
         ]);
     }
 }

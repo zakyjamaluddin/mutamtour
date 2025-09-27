@@ -59,8 +59,12 @@ class JamaahResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')->label('Nama')->description(fn (Jamaah $record): string => $record->kantor->nama)->sortable()
-                ->wrap()
+                Tables\Columns\TextColumn::make('nama')
+                    ->label('Nama')
+                    ->description(fn (Jamaah $record): string => $record->kantor->nama)
+                    ->sortable()
+                    ->wrap()
+                    ->formatStateUsing(fn ($state) => strtoupper($state))
                 ->searchable(),
                 Tables\Columns\TextColumn::make('cs')->label('CS')->placeholder('Tidak ada')->searchable()->sortable()->visibleFrom('md'),
                 Tables\Columns\TextColumn::make('kantor.nama')->placeholder('Tidak ada')->searchable()->sortable()->hidden(),
