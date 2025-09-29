@@ -23,9 +23,9 @@ class ManageJamaahs extends ManageRecords
                 ->label('Tambah Jamaah')
                 ->modalHeading('Tambah Jamaah Baru'),
             
-            ImportJamaahAction::make(),
+            // ImportJamaahAction::make(),
             
-            DownloadTemplateAction::make(),
+            // DownloadTemplateAction::make(),
             
             ExportAction::make()
                 ->label('Export')

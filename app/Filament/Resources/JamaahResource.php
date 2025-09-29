@@ -12,6 +12,8 @@ use Filament\Resources\Resource;
 use Filament\Tables\Columns\Layout\Split;
 use App\Filament\Resources\JamaahResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class JamaahResource extends Resource
 {
@@ -88,6 +90,63 @@ class JamaahResource extends Resource
                 Tables\Columns\IconColumn::make('status_pembayaran')->boolean()->label('Lunas'),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('status_keberangkatan')
+                    ->label('Status')
+                    ->trueLabel('Belum berangkat')
+                    ->falseLabel('Sudah berangkat')
+                    ->default(true)
+                    ->queries(
+                        true: function (Builder $query) {
+                            $today = Carbon::today();
+                            $currentYear = (int) $today->year;
+                            $currentMonth = (int) $today->month;
+                            $currentDay = (int) $today->day;
+
+                            return $query->whereHas('group', function (Builder $g) use ($currentYear, $currentMonth, $currentDay) {
+                                $g->where(function (Builder $q) use ($currentYear, $currentMonth, $currentDay) {
+                                    $q->whereNull('tahun')
+                                        ->orWhereNull('bulan')
+                                        ->orWhere('tahun', '>', $currentYear)
+                                        ->orWhere(function (Builder $q2) use ($currentYear, $currentMonth) {
+                                            $q2->where('tahun', $currentYear)
+                                                ->where('bulan', '>', $currentMonth);
+                                        })
+                                        ->orWhere(function (Builder $q3) use ($currentYear, $currentMonth, $currentDay) {
+                                            $q3->where('tahun', $currentYear)
+                                                ->where('bulan', $currentMonth)
+                                                ->where(function (Builder $q4) use ($currentDay) {
+                                                    $q4->whereNull('tanggal')
+                                                        ->orWhere('tanggal', '>=', $currentDay);
+                                                });
+                                        });
+                                });
+                            });
+                        },
+                        false: function (Builder $query) {
+                            $today = Carbon::today();
+                            $currentYear = (int) $today->year;
+                            $currentMonth = (int) $today->month;
+                            $currentDay = (int) $today->day;
+
+                            return $query->whereHas('group', function (Builder $g) use ($currentYear, $currentMonth, $currentDay) {
+                                $g->whereNotNull('tahun')
+                                    ->whereNotNull('bulan')
+                                    ->where(function (Builder $q) use ($currentYear, $currentMonth, $currentDay) {
+                                        $q->where('tahun', '<', $currentYear)
+                                            ->orWhere(function (Builder $q2) use ($currentYear, $currentMonth) {
+                                                $q2->where('tahun', $currentYear)
+                                                    ->where('bulan', '<', $currentMonth);
+                                            })
+                                            ->orWhere(function (Builder $q3) use ($currentYear, $currentMonth, $currentDay) {
+                                                $q3->where('tahun', $currentYear)
+                                                    ->where('bulan', $currentMonth)
+                                                    ->whereNotNull('tanggal')
+                                                    ->where('tanggal', '<', $currentDay);
+                                            });
+                                    });
+                            });
+                        },
+                    ),
                 Tables\Filters\SelectFilter::make('group_id')
                     ->label('Group')
                     ->options(function () {

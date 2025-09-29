@@ -4,11 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GroupResource\Pages;
 use App\Models\Group;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
 
 class GroupResource extends Resource
 {
@@ -101,6 +103,68 @@ class GroupResource extends Resource
                 Tables\Columns\TextColumn::make('tour_leader')->label('Tour Leader')->visibleFrom('md'),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('status_keberangkatan')
+                    ->label('Status Keberangkatan')
+                    ->trueLabel('Belum berangkat')
+                    ->falseLabel('Sudah berangkat')
+                    ->default(true)
+                    ->queries(
+                        true: function (Builder $query) {
+                            $today = Carbon::today();
+                            $currentYear = (int) $today->year;
+                            $currentMonth = (int) $today->month;
+                            $currentDay = (int) $today->day;
+
+                            return $query->where(function (Builder $q) use ($currentYear, $currentMonth, $currentDay) {
+                                // Tahun atau bulan null dianggap belum berangkat
+                                $q->whereNull('tahun')
+                                    ->orWhereNull('bulan')
+                                    // Tahun di masa depan
+                                    ->orWhere('tahun', '>', $currentYear)
+                                    // Tahun sama, bulan di masa depan
+                                    ->orWhere(function (Builder $q2) use ($currentYear, $currentMonth) {
+                                        $q2->where('tahun', $currentYear)
+                                            ->where('bulan', '>', $currentMonth);
+                                    })
+                                    // Tahun & bulan sama: tanggal null atau >= hari ini dianggap belum berangkat
+                                    ->orWhere(function (Builder $q3) use ($currentYear, $currentMonth, $currentDay) {
+                                        $q3->where('tahun', $currentYear)
+                                            ->where('bulan', $currentMonth)
+                                            ->where(function (Builder $q4) use ($currentDay) {
+                                                $q4->whereNull('tanggal')
+                                                    ->orWhere('tanggal', '>=', $currentDay);
+                                            });
+                                    });
+                            });
+                        },
+                        false: function (Builder $query) {
+                            $today = Carbon::today();
+                            $currentYear = (int) $today->year;
+                            $currentMonth = (int) $today->month;
+                            $currentDay = (int) $today->day;
+
+                            return $query
+                                // Hanya data dengan tahun & bulan yang terisi yang bisa dianggap sudah berangkat
+                                ->whereNotNull('tahun')
+                                ->whereNotNull('bulan')
+                                ->where(function (Builder $q) use ($currentYear, $currentMonth, $currentDay) {
+                                    // Tahun di masa lalu
+                                    $q->where('tahun', '<', $currentYear)
+                                        // Tahun sama, bulan di masa lalu
+                                        ->orWhere(function (Builder $q2) use ($currentYear, $currentMonth) {
+                                            $q2->where('tahun', $currentYear)
+                                                ->where('bulan', '<', $currentMonth);
+                                        })
+                                        // Tahun & bulan sama: tanggal terisi dan < hari ini
+                                        ->orWhere(function (Builder $q3) use ($currentYear, $currentMonth, $currentDay) {
+                                            $q3->where('tahun', $currentYear)
+                                                ->where('bulan', $currentMonth)
+                                                ->whereNotNull('tanggal')
+                                                ->where('tanggal', '<', $currentDay);
+                                        });
+                                });
+                        },
+                    ),
                 Tables\Filters\SelectFilter::make('paket_id')
                     ->label('Paket')
                     ->relationship('paket', 'nama'),
