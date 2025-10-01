@@ -14,11 +14,11 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #F54927;
             padding-bottom: 20px;
         }
         .header h1 {
-            color: #007bff;
+            color: #F54927;
             margin: 0;
             font-size: 28px;
         }
@@ -35,7 +35,7 @@
             flex: 1;
         }
         .info-section h3 {
-            color: #007bff;
+            color: #F54927;
             margin-bottom: 10px;
             font-size: 16px;
         }
@@ -69,7 +69,7 @@
         .total-amount {
             font-size: 18px;
             font-weight: bold;
-            color: #007bff;
+            color: #F54927;
         }
         .footer {
             margin-top: 50px;
@@ -90,7 +90,7 @@
 <body>
     <div class="header">
         <h1>INVOICE PEMBAYARAN</h1>
-        <p>Mutam Tour & Travel</p>
+        <p>PT. Mutiara Amanah</p>
         <p>No. Invoice: #{{ $pembayaran->id }}</p>
     </div>
 
@@ -165,8 +165,8 @@
     </div>
 
     <div class="footer">
-        <p>Terima kasih atas kepercayaan Anda kepada Mutam Tour & Travel</p>
+        <p>Terima kasih atas kepercayaan Anda kepada PT. Mutiara Amanah</p>
         <p>Invoice ini dibuat secara otomatis pada {{ now()->format('d F Y H:i') }}</p>
-    </div>
+</div>
 </body>
 </html>

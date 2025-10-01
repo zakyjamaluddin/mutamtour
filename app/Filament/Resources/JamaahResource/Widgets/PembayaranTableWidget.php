@@ -107,6 +107,13 @@ class PembayaranTableWidget extends BaseWidget
                     ->visibleFrom('md'),
                 
             ])
+            ->actions([
+                Tables\Actions\Action::make('cetak_invoice')
+                    ->label('Cetak Invoice')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn ($record) => route('invoice.generate', $record))
+                    ->openUrlInNewTab(),
+            ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('Belum Ada Pembayaran')
             ->emptyStateDescription('Jamaah ini belum memiliki riwayat pembayaran.')
