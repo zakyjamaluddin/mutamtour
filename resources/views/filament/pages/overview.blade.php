@@ -1,8 +1,8 @@
 <x-filament::page>
     {{ $this->renderHeaderWidgets() }}
-    <div class="mt-6">
+    <!-- <div class="mt-6">
         {{ $this->renderFooterWidgets() }}
-    </div>
+    </div> -->
 </x-filament::page>
 
 

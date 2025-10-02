@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Jamaah;
@@ -9,11 +10,11 @@ use Filament\Forms\Form;
 use App\Models\Pembayaran;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use PhpOffice\PhpWord\TemplateProcessor;
 use Filament\Tables\Columns\Layout\Split;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\JamaahResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 
 class JamaahResource extends Resource
 {
@@ -222,6 +223,32 @@ class JamaahResource extends Resource
                         ->modalWidth('md'),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\Action::make('unduhRekomendasi')
+                        ->label('Unduh Rekomendasi Imigrasi')
+                        ->icon('heroicon-o-arrow-down-on-square')
+                        ->action(function (Jamaah $record) {
+                            // 1. Load template
+                            $templatePath = storage_path('app/templates/rekom.docx');
+                            $template = new TemplateProcessor($templatePath);
+
+                            // 2. Set values
+                            $template->setValue('nama', $record->nama ?? '-');
+                            // $template->setValue('ttl', 
+                            //     ($record->tempat_lahir ?? '-') . ', ' . 
+                            //     ($record->tanggal_lahir ? $record->tanggal_lahir->format('d-m-Y') : '-')
+                            // );
+                            // $template->setValue('nik', $record->nik ?? '-');
+
+
+                            // 3. Save to temporary file
+                            $fileName = 'Rekomendasi_Imigrasi_' . $record->nama . '.docx';
+                            $tempPath = storage_path('app/public/' . $fileName);
+                            $template->saveAs($tempPath);
+
+                            // 4. Download response
+                            return response()->download($tempPath)->deleteFileAfterSend(true);
+                        })
+                        ->color('success'),
                 ]),
             ])
             ->bulkActions([
