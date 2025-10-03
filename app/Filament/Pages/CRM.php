@@ -12,7 +12,8 @@ class CRM extends Page
 
     protected static string $view = 'filament.pages.crm';
 
-    protected static ?string $navigationGroup = 'Manajemen Jamaah';
+    protected static ?string $navigationLabel = 'CRM';
+
 
     protected static ?int $navigationSort = 2;
 

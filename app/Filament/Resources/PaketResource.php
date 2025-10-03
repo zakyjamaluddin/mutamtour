@@ -16,6 +16,8 @@ class PaketResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Paket';
+    protected static ?string $navigationGroup = 'Administrator';
+
 
     public static function form(Form $form): Form
     {

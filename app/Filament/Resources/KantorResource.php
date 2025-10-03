@@ -16,6 +16,8 @@ class KantorResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationLabel = 'Kantor';
+    protected static ?string $navigationGroup = 'Administrator';
+
 
     public static function form(Form $form): Form
     {

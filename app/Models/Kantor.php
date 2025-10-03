@@ -19,7 +19,9 @@ class Kantor extends Model
     {
         return $this->hasMany(Jamaah::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'kantor_user');
+    }
 }
-
-
-

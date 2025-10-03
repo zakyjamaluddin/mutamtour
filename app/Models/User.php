@@ -46,4 +46,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function kantors()
+    {
+        return $this->belongsToMany(\App\Models\Kantor::class, 'kantor_user');
+    }
 }

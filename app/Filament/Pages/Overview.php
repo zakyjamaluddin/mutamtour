@@ -15,8 +15,7 @@ class Overview extends BaseDashboard
         return [
             \App\Filament\Widgets\StatsUmrahOverview::class,
             \App\Filament\Widgets\JamaahPerBulanChart::class,
+            \App\Filament\Widgets\JamaahPerKantorChart::class,
         ];
     }
 }
-
-

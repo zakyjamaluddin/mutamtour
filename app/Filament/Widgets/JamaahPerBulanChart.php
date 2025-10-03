@@ -15,14 +15,19 @@ class JamaahPerBulanChart extends ChartWidget implements HasForms
     use InteractsWithForms;
 
     public ?array $data = [];
-    protected int|string|array $columnSpan = 'full';
+    // protected int|string|array $columnSpan = 'full';
 
 
     protected function getFormStatePath(): string
     {
         return 'data';
     }
-    protected static ?string $heading = 'Jamaah per Bulan (berdasarkan bulan keberangkatan)';
+    protected static ?string $heading = 'Jamaah per Bulan';
+    // protected int|string|array $contentHeight = '300px';
+
+
+
+
 
     protected function getData(): array
     {
@@ -31,7 +36,7 @@ class JamaahPerBulanChart extends ChartWidget implements HasForms
         $window = (int) ($state['window'] ?? 3);
         $months = collect(range(-$window, $window))->map(fn ($i) => $center->copy()->addMonths($i));
 
-        $labels = $months->map(fn (Carbon $d) => $d->format('M Y'))->all();
+        $labels = $months->map(fn (Carbon $d) => $d->format('M \'y'))->all();
 
         $counts = $months->map(function (Carbon $d) {
             $year = $d->year;
@@ -72,6 +77,18 @@ class JamaahPerBulanChart extends ChartWidget implements HasForms
                 ->reactive(),
         ];
     }
+
+    protected function getOptions(): array
+    {
+        return [
+            'maintainAspectRatio' => false,
+            'responsive' => true,
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+        ];
+    }
+
 }
-
-

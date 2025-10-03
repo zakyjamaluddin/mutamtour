@@ -14,6 +14,9 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Filament\Tables\Columns\Layout\Split;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\JamaahResource\Pages;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class JamaahResource extends Resource
@@ -30,8 +33,10 @@ class JamaahResource extends Resource
                 Forms\Components\TextInput::make('nama')->label('Nama')->required(),
                 Forms\Components\TextInput::make('alamat')->label('Alamat')->nullable(),
                 Forms\Components\Select::make('kantor_id')->relationship('kantor', 'nama')->label('Kantor')->required(),
+                Forms\Components\TextInput::make('tempat_lahir')->label('Tempat Lahir')->nullable(),
                 Forms\Components\DatePicker::make('tanggal_lahir')->label('Tanggal Lahir')->nullable(),
                 Forms\Components\TextInput::make('nomor_wa')->label('Nomor WA')->nullable(),
+                Forms\Components\TextInput::make('nik')->label('Nomor NIK')->numeric()->nullable(),
                 Forms\Components\TextInput::make('cs')->label('Customer Service')->placeholder('Nama CS yang membantu pendaftaran')->nullable(),
                 Forms\Components\Select::make('group_id')
                     ->label('Group')
@@ -90,7 +95,19 @@ class JamaahResource extends Resource
                 Tables\Columns\IconColumn::make('passport')->boolean()->label('Passport')->visibleFrom('md'),
                 Tables\Columns\IconColumn::make('status_pembayaran')->boolean()->label('Lunas'),
             ])
+            
             ->filters([
+                Tables\Filters\SelectFilter::make('kantor')
+                    ->relationship('kantor', 'nama') // nama relasi di model Jamaah
+                    ->label('Kantor')
+                    ->searchable()
+                    ->default(function () {
+                        $user = Auth::user();
+
+                        return $user->hasRole('super_admin')
+                            ? null
+                            : $user->kantors()->first()?->id;
+                    }),
                 Tables\Filters\TernaryFilter::make('status_keberangkatan')
                     ->label('Status')
                     ->trueLabel('Belum berangkat')
@@ -168,11 +185,13 @@ class JamaahResource extends Resource
                     }),
             ])
             ->actions([
+
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('tambah_pembayaran')
                         ->label('Tambah Pembayaran')
                         ->icon('heroicon-o-plus')
                         ->form([
+                            
                             Forms\Components\Select::make('jenis')
                                 ->label('Jenis Pembayaran')
                                 ->options([
@@ -201,7 +220,8 @@ class JamaahResource extends Resource
                             }
                         })
                         ->modalHeading('Tambah Pembayaran')
-                        ->modalButton('Simpan'),
+                        ->modalButton('Simpan')
+                        ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO
                     Tables\Actions\Action::make('ubah_group')
                         ->label('Ubah Group')
                         ->icon('heroicon-o-arrow-path')
@@ -220,24 +240,95 @@ class JamaahResource extends Resource
                         })
                         ->modalHeading('Ubah Group Jamaah')
                         ->modalButton('Simpan')
-                        ->modalWidth('md'),
+                        ->modalWidth('md')
+                        ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\Action::make('unduhRekomendasi')
                         ->label('Unduh Rekomendasi Imigrasi')
                         ->icon('heroicon-o-arrow-down-on-square')
-                        ->action(function (Jamaah $record) {
+                        ->color('success')
+                        ->modalHeading('Buat Surat Rekomendasi')
+                        ->modalButton('Unduh Surat')
+                        ->form( function () {
+                            $bulanRomawi = [
+                                1 => 'I',
+                                2 => 'II',
+                                3 => 'III',
+                                4 => 'IV',
+                                5 => 'V',
+                                6 => 'VI',
+                                7 => 'VII',
+                                8 => 'VIII',
+                                9 => 'IX',
+                                10 => 'X',
+                                11 => 'XI',
+                                12 => 'XII',
+                            ];
+                            return [
+                                TextInput::make('nomor_surat')
+                                ->label('Nomor Surat')
+                                ->suffix('/MUTAMTOUR/' . $bulanRomawi[Carbon::now()->month] . '/' . Carbon::now()->year)
+                                ->required(),
+                            Forms\Components\Select::make('imigrasi_id')
+                                ->label('Kantor Imigrasi Tujuan')
+                                ->options(\App\Models\Imigrasi::pluck('nama', 'id'))
+                                ->searchable()
+                                ->required(),
+                                ];
+                        })
+                        ->action(function (Jamaah $record, array $data) {
                             // 1. Load template
                             $templatePath = storage_path('app/templates/rekom.docx');
                             $template = new TemplateProcessor($templatePath);
 
+                            // Ambil data imigrasi
+                            $imigrasi = \App\Models\Imigrasi::find($data['imigrasi_id']);
+
                             // 2. Set values
+                            $bulanRomawi = [
+                                1 => 'I',
+                                2 => 'II',
+                                3 => 'III',
+                                4 => 'IV',
+                                5 => 'V',
+                                6 => 'VI',
+                                7 => 'VII',
+                                8 => 'VIII',
+                                9 => 'IX',
+                                10 => 'X',
+                                11 => 'XI',
+                                12 => 'XII',
+                            ];
+                            $template->setValue('nomor_surat', $data['nomor_surat'] . '/MUTAMTOUR/' . $bulanRomawi[Carbon::now()->month] . '/' . Carbon::now()->year ?? '-');
                             $template->setValue('nama', $record->nama ?? '-');
-                            // $template->setValue('ttl', 
-                            //     ($record->tempat_lahir ?? '-') . ', ' . 
-                            //     ($record->tanggal_lahir ? $record->tanggal_lahir->format('d-m-Y') : '-')
-                            // );
-                            // $template->setValue('nik', $record->nik ?? '-');
+                            $template->setValue('ttl', 
+                                ($record->tempat_lahir ?? '-') . ', ' . 
+                                ($record->tanggal_lahir ? $record->tanggal_lahir->translatedFormat('d F Y') : '-')
+                            );
+                            $template->setValue('nik', $record->nik ?? '-');
+
+                            $template->setValue('nama_imigrasi', $imigrasi->nama ?? '-');
+                            $template->setValue('alamat_imigrasi', $imigrasi->alamat ?? '-');
+
+                            // tambahkan bulan dan tahun keberangkatan dari group
+                            $bulanMap = [
+                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                                7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                            ];
+                            $bulanKeberangkatan = $record->group && isset($bulanMap[(int)$record->group->bulan]) 
+                                ? $bulanMap[(int)$record->group->bulan] 
+                                : '-';
+                            $tahunKeberangkatan = $record->group->tahun ?? '-';
+                            $template->setValue('bulan_keberangkatan', $bulanKeberangkatan);
+                            $template->setValue('tahun_keberangkatan', $tahunKeberangkatan);
+
+                            // tambahkan tanggal, bulan dan tahun saat ini
+                            $now = Carbon::now();
+                            $tanggalSekarang = $now->day;
+                            $bulanSekarang = $bulanMap[(int)$now->month] ?? '-';
+                            $tahunSekarang = $now->year;
+                            $template->setValue('tanggal', $tanggalSekarang . ' ' . $bulanSekarang . ' ' . $tahunSekarang);
 
 
                             // 3. Save to temporary file
@@ -247,8 +338,7 @@ class JamaahResource extends Resource
 
                             // 4. Download response
                             return response()->download($tempPath)->deleteFileAfterSend(true);
-                        })
-                        ->color('success'),
+                        }),
                 ]),
             ])
             ->bulkActions([
@@ -264,6 +354,22 @@ class JamaahResource extends Resource
             'view' => Pages\ViewJamaah::route('/{record}'),
         ];
     }
+
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     $query = parent::getEloquentQuery();
+    //     $user = Auth::user();
+
+    //     // Jika user bukan super_admin, batasi pilihan kantor di filter
+    //     // agar mereka hanya bisa melihat data dari kantor yang mereka kelola.
+    //     if (!$user->hasRole('super_admin')) {
+    //         $managedKantorIds = $user->kantors()->pluck('kantor.id');
+
+    //         if ($managedKantorIds->isNotEmpty()) {
+    //             $query->whereIn('kantor_id', $managedKantorIds);
+    //         }
+    //     }
+
+    //     return $query;
+    // }
 }
-
-

@@ -35,6 +35,9 @@ class ViewJamaah extends ViewRecord
                             ->placeholder('Tidak ada alamat'),
                         Infolists\Components\TextEntry::make('kantor.nama')
                             ->label('Kantor'),
+                        Infolists\Components\TextEntry::make('tempat_lahir')
+                            ->label('Tempat Lahir')
+                            ->placeholder('Tidak ada tempat lahir'),
                         Infolists\Components\TextEntry::make('tanggal_lahir')
                             ->label('Tanggal Lahir')
                             ->date('d F Y')
@@ -42,6 +45,9 @@ class ViewJamaah extends ViewRecord
                         Infolists\Components\TextEntry::make('nomor_wa')
                             ->label('Nomor WhatsApp')
                             ->placeholder('Tidak ada nomor WA'),
+                        Infolists\Components\TextEntry::make('nik')
+                            ->label('Nomor NIK')
+                            ->placeholder('Tidak ada nomor NIK'),
                         Infolists\Components\TextEntry::make('group')
                             ->label('Group')
                             ->formatStateUsing(function ($state, $record) {

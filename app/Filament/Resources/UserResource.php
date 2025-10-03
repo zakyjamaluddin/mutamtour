@@ -23,6 +23,8 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     
     protected static ?string $navigationLabel = 'Users';
+    // Navigation group
+    protected static ?string $navigationGroup = 'Administrator';
     
     protected static ?string $modelLabel = 'User';
     
@@ -64,6 +66,12 @@ class UserResource extends Resource
                             ->preload()
                             ->searchable()
                             ->columnSpanFull(),
+                        Forms\Components\Select::make('kantors')
+                            ->label('Kelola Kantor')
+                            ->multiple()
+                            ->relationship('kantors', 'nama')
+                            ->preload()
+                            ->searchable(),
                     ])
                     ->columns(2),
             ]);
@@ -86,6 +94,11 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label('Email Verified')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('kantors.nama')
                     ->label('Email Verified')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()

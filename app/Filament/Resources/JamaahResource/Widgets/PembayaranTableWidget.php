@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\JamaahResource\Widgets;
 
-use App\Models\Pembayaran;
-use App\Models\Jamaah;
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Jamaah;
+use App\Models\Pembayaran;
 use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class PembayaranTableWidget extends BaseWidget
 {
@@ -78,7 +82,7 @@ class PembayaranTableWidget extends BaseWidget
                         return $pembayaran;
                     })
                     ->successNotificationTitle('Pembayaran berhasil ditambahkan')
-                    ->visible(fn (): bool => $this->jamaah !== null),
+                    ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
@@ -95,7 +99,7 @@ class PembayaranTableWidget extends BaseWidget
                         'Passport' => 'warning',
                         'Biaya Umroh' => 'success',
                         default => 'gray',
-                    }),
+                    })->visibleFrom('md'),
                 Tables\Columns\TextColumn::make('jumlah')
                     ->label('Jumlah')
                     ->money('IDR')
@@ -108,11 +112,16 @@ class PembayaranTableWidget extends BaseWidget
                 
             ])
             ->actions([
-                Tables\Actions\Action::make('cetak_invoice')
+                ActionGroup::make([
+                    EditAction::make()->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
+                    DeleteAction::make()->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
+                    Tables\Actions\Action::make('cetak_invoice')
                     ->label('Cetak Invoice')
                     ->icon('heroicon-o-printer')
                     ->url(fn ($record) => route('invoice.generate', $record))
                     ->openUrlInNewTab(),
+                ]),
+                
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateHeading('Belum Ada Pembayaran')

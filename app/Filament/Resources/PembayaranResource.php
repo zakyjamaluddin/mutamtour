@@ -18,6 +18,8 @@ class PembayaranResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $navigationLabel = 'Pembayaran';
+    protected static ?string $navigationGroup = 'Keuangan';
+
 
     public static function form(Form $form): Form
     {
