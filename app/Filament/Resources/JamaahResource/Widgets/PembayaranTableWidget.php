@@ -82,7 +82,7 @@ class PembayaranTableWidget extends BaseWidget
                         return $pembayaran;
                     })
                     ->successNotificationTitle('Pembayaran berhasil ditambahkan')
-                    ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
+                    ->visible(fn () => Auth::user()?->hasRole(['admin', 'super_admin'])),  //TODO,
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
@@ -113,8 +113,8 @@ class PembayaranTableWidget extends BaseWidget
             ])
             ->actions([
                 ActionGroup::make([
-                    EditAction::make()->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
-                    DeleteAction::make()->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO,
+                    EditAction::make()->visible(fn () => Auth::user()?->hasRole(['admin', 'super_admin'])),  //TODO,
+                    DeleteAction::make()->visible(fn () => Auth::user()?->hasRole(['admin', 'super_admin'])),  //TODO,
                     Tables\Actions\Action::make('cetak_invoice')
                     ->label('Cetak Invoice')
                     ->icon('heroicon-o-printer')

@@ -9,6 +9,10 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
+Route::get('/doc', function () {
+    return view('dokumentasi');
+})->name('dokumentasi');
+
 Route::get('/jamaah/template/download', [JamaahTemplateController::class, 'download'])->name('jamaah.template.download');
 
 // Invoice Routes

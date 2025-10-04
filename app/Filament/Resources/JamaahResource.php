@@ -28,6 +28,7 @@ class JamaahResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nama')->label('Nama')->required(),
@@ -65,6 +66,7 @@ class JamaahResource extends Resource
 
     public static function table(Table $table): Table
     {
+        // dd(Auth::user()->roles->pluck('name')->toArray());
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama')
@@ -221,17 +223,29 @@ class JamaahResource extends Resource
                         })
                         ->modalHeading('Tambah Pembayaran')
                         ->modalButton('Simpan')
-                        ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO
+                        ->visible(fn () => Auth::user()?->hasRole(['admin', 'super_admin'])),  //TODO
                     Tables\Actions\Action::make('ubah_group')
                         ->label('Ubah Group')
                         ->icon('heroicon-o-arrow-path')
                         ->form([
                             Forms\Components\Select::make('group_id')
-                                ->label('Group Baru')
-                                ->relationship('group', 'keterangan')
-                                ->searchable()
-                                ->preload()
-                                ->required(),
+                                ->label('Group')
+                                ->nullable()
+                                ->options(function () {
+                                    $bulanMap = [
+                                        1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+                                        7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+                                    ];
+                                    return \App\Models\Group::with('paket')->get()->mapWithKeys(function ($group) use ($bulanMap) {
+                                        $paketNama = $group->paket?->nama ?? '-';
+                                        $tanggal = $group->tanggal;
+                                        $bulan = $bulanMap[(int) $group->bulan] ?? $group->bulan;
+                                        $tahun = $group->tahun;
+                                        $keterangan = $group->keterangan ?? '';
+                                        $label = trim("{$paketNama} {$tanggal} {$bulan} {$tahun} {$keterangan}");
+                                        return [$group->id => $label];
+                                    })->toArray();
+                                }),
                         ])
                         ->action(function (Jamaah $record, array $data) {
                             $record->update([
@@ -241,7 +255,7 @@ class JamaahResource extends Resource
                         ->modalHeading('Ubah Group Jamaah')
                         ->modalButton('Simpan')
                         ->modalWidth('md')
-                        ->visible(fn () => in_array(Auth::user()->role, ['admin', 'super_admin'])),  //TODO
+                        ->visible(fn () => Auth::user()?->hasRole(['admin', 'super_admin'])),  //TODO
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\Action::make('unduhRekomendasi')
